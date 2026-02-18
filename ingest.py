@@ -1,0 +1,35 @@
+"""
+Docstring for ingest
+ingest.py is a module for ingesting data into the RAG pipeline.
+"""
+
+import os
+from docx import Document
+
+def ingest_docx(filepath):
+    document = Document(filepath)
+    full_text = []
+
+    for paragraph in document.paragraphs:
+        full_text.append(paragraph.text)
+
+    return "\n".join(full_text)
+
+
+def ingest_data(directory_path):
+    documents = []
+
+    for filename in os.listdir(directory_path):
+        if filename.endswith(".docx"):
+            full_path = os.path.join(directory_path, filename)
+            text = ingest_docx(full_path)
+
+            documents.append({
+                "id": filename,
+                "text": text,
+                "metadata": {
+                    "source": filename
+                }
+            })
+
+    return documents
